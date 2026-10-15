@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102a43">
+<title>SMARTFIX | Sistema de Gestión de Calidad</title>
+<style>
+:root{
+  --navy:#102a43;--blue:#1769aa;--cyan:#37b8c5;--bg:#f3f7fb;--card:#fff;
+  --text:#243b53;--muted:#627d98;--line:#d9e2ec;--soft:#eaf4fb;--shadow:0 12px 32px rgba(16,42,67,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6}
+button{font:inherit;cursor:pointer}
+.app{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:265px;background:var(--navy);color:#fff;padding:26px 18px;display:flex;flex-direction:column;z-index:10}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px 28px;border-bottom:1px solid rgba(255,255,255,.15)}
+.brand-logo{width:42px;height:42px;border-radius:13px;object-fit:cover}
+.brand h1{font-size:19px;line-height:1.1;margin:0;letter-spacing:.06em}
+.brand small{display:block;color:#b7c9d9;font-size:11px;margin-top:5px;letter-spacing:0}
+.nav-label{color:#8faec4;text-transform:uppercase;font-size:10px;letter-spacing:.15em;font-weight:800;margin:24px 12px 9px}
+.nav{display:grid;gap:6px}
+.nav-btn{display:flex;align-items:center;gap:12px;border:0;background:transparent;color:#d9e7f1;text-align:left;padding:11px 12px;border-radius:11px;transition:.18s;width:100%}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,255,255,.12);color:#fff}
+.nav-btn.active{box-shadow:inset 3px 0 var(--cyan)}
+.nav-num{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:8px;background:rgba(255,255,255,.1);font-size:12px;font-weight:800}
+.nav-btn.active .nav-num{background:var(--cyan);color:var(--navy)}
+.nav-text{font-size:13px;font-weight:650}
+.main{margin-left:265px;min-height:100vh}
+.topbar{height:68px;padding:0 38px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:rgba(255,255,255,.86);backdrop-filter:blur(10px);position:sticky;top:0;z-index:5}
+.breadcrumb{font-size:13px;color:var(--muted)}
+.breadcrumb strong{color:var(--text)}
+.status{font-size:11px;font-weight:750;color:#176b58;background:#e4f7ef;padding:7px 11px;border-radius:100px;display:flex;gap:7px;align-items:center}
+.status:before{content:"";width:7px;height:7px;border-radius:50%;background:#26a269}
+.content{max-width:1160px;margin:0 auto;padding:36px 38px 60px}
+.view{display:none;animation:fade .22s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.hero{position:relative;overflow:hidden;background:linear-gradient(115deg,#102a43 0%,#174d78 58%,#177f92 100%);border-radius:22px;padding:38px;color:#fff;box-shadow:var(--shadow)}
+.hero:after{content:"";position:absolute;width:280px;height:280px;border:1px solid rgba(255,255,255,.15);border-radius:50%;right:-60px;top:-110px;box-shadow:0 0 0 35px rgba(255,255,255,.035),0 0 0 70px rgba(255,255,255,.025)}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;color:var(--cyan);margin:0 0 12px}
+.hero h2{font-size:clamp(28px,4vw,43px);line-height:1.12;letter-spacing:-.035em;margin:0;max-width:650px}
+.hero p{color:#d7e8f4;max-width:650px;margin:16px 0 24px;font-size:15px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:750;transition:.18s}
+.btn-primary{background:var(--cyan);color:#082d43}
+.btn-primary:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.22)}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:32px 0 16px}
+.section-head h3{margin:0;font-size:20px;letter-spacing:-.02em}
+.section-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.chapter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.chapter-card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:22px;box-shadow:0 4px 16px rgba(16,42,67,.025);cursor:pointer;transition:.2s;display:flex;flex-direction:column;min-height:205px}
+.chapter-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#a8d8e3}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}
+.icon-box{width:42px;height:42px;border-radius:12px;background:var(--soft);color:var(--blue);display:grid;place-items:center;font-size:20px}
+.tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#176b78;background:#e6f8f8;padding:6px 9px;border-radius:100px}
+.chapter-card h4{margin:0 0 7px;font-size:17px}
+.chapter-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.card-link{margin-top:auto;padding-top:18px;color:var(--blue);font-size:12px;font-weight:800;display:flex;align-items:center;gap:6px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px}
+.metric strong{display:block;font-size:24px;color:var(--navy);letter-spacing:-.04em}
+.metric span{font-size:12px;color:var(--muted)}
+.page-head{display:flex;gap:18px;align-items:flex-start;margin:4px 0 26px}
+.page-number{width:58px;height:58px;flex:none;display:grid;place-items:center;border-radius:16px;color:white;background:linear-gradient(135deg,var(--blue),var(--cyan));font-size:20px;font-weight:900;box-shadow:0 8px 18px rgba(23,105,170,.18)}
+.page-head h2{margin:0;font-size:clamp(25px,3vw,34px);line-height:1.15;letter-spacing:-.035em}
+.page-head p{margin:8px 0 0;color:var(--muted);max-width:780px}
+.purpose{border-left:4px solid var(--cyan);background:#eaf7fa;padding:16px 18px;border-radius:0 12px 12px 0;margin-bottom:22px}
+.purpose strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#176b78;margin-bottom:4px}
+.purpose p{margin:0;font-size:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:17px}
+.panel h3{font-size:16px;margin:0 0 13px}
+.panel h4{font-size:13px;margin:17px 0 6px}
+.panel p{font-size:13px;color:#486581;margin:0 0 10px}
+.panel p:last-child{margin-bottom:0}
+.panel ul{margin:0;padding-left:19px;color:#486581;font-size:13px}
+.panel li{padding:4px 0}
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{text-align:left;background:#f3f7fb;color:#486581;font-weight:800}
+.data-table th,.data-table td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.data-table tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.callout{padding:13px 15px;background:#fff8e8;border:1px solid #f2dfb4;border-radius:12px;color:#7b5a17;font-size:12px;margin-top:14px}
+.chapter-footer{display:flex;justify-content:space-between;gap:12px;margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+.chapter-footer .btn{background:#fff;border:1px solid var(--line);color:var(--text)}
+.chapter-footer .btn:hover{border-color:var(--cyan)}
+.search{width:100%;border:1px solid var(--line);padding:11px 13px;border-radius:10px;font:inherit;font-size:13px;margin:0 0 12px}
+.search:focus{outline:2px solid #b9e7ec;border-color:var(--cyan)}
+.term{border-bottom:1px solid var(--line);padding:12px 0}
+.term:last-child{border-bottom:0}
+.term strong{font-size:13px}
+.term small{display:inline-block;color:var(--blue);font-weight:750;font-size:10px;background:var(--soft);padding:3px 7px;border-radius:50px;margin-left:6px}
+.term p{margin:5px 0 0}
+.footer{text-align:center;color:#829ab1;font-size:11px;padding:22px 0 0}
+@media(max-width:900px){.sidebar{width:220px}.main{margin-left:220px}.content{padding:26px 22px 45px}.topbar{padding:0 22px}.chapter-grid{grid-template-columns:1fr}.hero{padding:30px}.two-col{grid-template-columns:1fr}}
+@media(max-width:650px){.sidebar{position:static;width:auto;padding:14px 14px 10px}.brand{padding:0 4px 13px;border-bottom:0}.brand-logo{width:36px;height:36px}.nav{display:flex;overflow-x:auto;padding:10px 0 4px;gap:6px}.nav-btn{width:auto;min-width:max-content;padding:8px 10px}.nav-num{width:25px;height:25px}.nav-text{font-size:12px}.main{margin-left:0}.topbar{height:54px;padding:0 17px}.content{padding:20px 15px 35px}.hero{padding:25px 22px;border-radius:17px}.hero h2{font-size:31px}.metrics{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.page-head{gap:12px}.page-number{width:48px;height:48px}.chapter-footer{flex-wrap:wrap}.status{font-size:10px}}
+@media print{.sidebar,.topbar,.hero-actions,.chapter-footer{display:none!important}.main{margin:0}.content{max-width:none;padding:0}.view{display:block!important;page-break-after:always}.panel,.chapter-card{box-shadow:none;break-inside:avoid}.hero{background:#174d78!important;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="logo.png" alt="Logo SMARTFIX" class="brand-logo">
+      <div><h1>SMARTFIX</h1><small>SISTEMA DE GESTIÓN DE CALIDAD</small></div>
+    </div>
+    <div class="nav-label">Navegación principal</div>
+    <nav class="nav" aria-label="Menú principal">
+      <button class="nav-btn active" data-view="home"><span class="nav-num">⌂</span><span class="nav-text">Panel principal</span></button>
+      <button class="nav-btn" data-view="ch1"><span class="nav-num">01</span><span class="nav-text">Objeto y alcance</span></button>
+      <button class="nav-btn" data-view="ch2"><span class="nav-num">02</span><span class="nav-text">Referencias normativas</span></button>
+      <button class="nav-btn" data-view="ch3"><span class="nav-num">03</span><span class="nav-text">Términos y definiciones</span></button>
+      <button class="nav-btn" data-view="ch4"><span class="nav-num">04</span><span class="nav-text">Contexto organizacional</span></button>
+      <button class="nav-btn" data-view="ch5"><span class="nav-num">05</span><span class="nav-text">Liderazgo</span></button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="breadcrumb"><span>SMARTFIX</span> / <strong id="crumb">Panel principal</strong></div>
+    </header>
+    <div class="content">
+      <section class="view active" id="home">
+        <div class="hero">
+          <p class="eyebrow">Portal de calidad · ISO</p>
+          <h2>Bienvenido al sistema de gestión de calidad de SMARTFIX</h2>
+          <p>Explora la estructura documental del proyecto, consulta el propósito de cada capítulo y conoce cómo SMARTFIX organiza la gestión de servicios técnicos para dispositivos Android.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="showView('ch1')">Comenzar recorrido <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+        <div class="section-head"><div><h3>Capítulos disponibles</h3><p>Selecciona un módulo para consultar su descripción y contenido.</p></div></div>
+        <div class="chapter-grid">
+          <article class="chapter-card" onclick="showView('ch1')" tabindex="0" onkeydown="cardKey(event,'ch1')">
+            <div class="card-top"><div class="icon-box">◎</div><span class="tag">Capítulo 01</span></div>
+            <h4>Objeto y campo de aplicación</h4><p>Define el propósito de SMARTFIX, los servicios que cubre y los límites del sistema de calidad.</p><div class="card-link">Consultar capítulo <span>→</span></div>
+          </article>
+          <article class="chapter-card" onclick="showView('ch2')" tabindex="0" onkeydown="cardKey(event,'ch2')">
+            <div class="card-top"><div class="icon-box">▤</div><span class="tag">Capítulo 02</span></div>
+            <h4>Referencias normativas</h4><p>Organiza las normas y documentos de apoyo que orientan el sistema de gestión.</p><div class="card-link">Consultar capítulo <span>→</span></div>
+          </article>
+          <article class="chapter-card" onclick="showView('ch3')" tabindex="0" onkeydown="cardKey(event,'ch3')">
+            <div class="card-top"><div class="icon-box">⌕</div><span class="tag">Capítulo 03</span></div>
+            <h4>Términos y definiciones</h4><p>Ofrece un glosario de conceptos clave utilizados en los procesos y documentos.</p><div class="card-link">Consultar capítulo <span>→</span></div>
+          </article>
+          <article class="chapter-card" onclick="showView('ch4')" tabindex="0" onkeydown="cardKey(event,'ch4')">
+            <div class="card-top"><div class="icon-box">◈</div><span class="tag">Capítulo 04</span></div>
+            <h4>Contexto de la organización</h4><p>Describe el entorno, las partes interesadas, sus necesidades y los procesos principales.</p><div class="card-link">Consultar capítulo <span>→</span></div>
+          </article>
+          <article class="chapter-card" onclick="showView('ch5')" tabindex="0" onkeydown="cardKey(event,'ch5')">
+            <div class="card-top"><div class="icon-box">♙</div><span class="tag">Capítulo 05</span></div>
+            <h4>Liderazgo</h4><p>Presenta el compromiso directivo, la política de calidad y las responsabilidades del equipo.</p><div class="card-link">Consultar capítulo <span>→</span></div>
+          </article>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>05</strong><span>Capítulos documentados</span></div>
+          <div class="metric"><strong>14</strong><span>Etapas del proceso de servicio técnico</span></div>
+          <div class="metric"><strong>01</strong><span>Objetivo: calidad y trazabilidad</span></div>
+        </div>
+        <div class="footer">SMARTFIX · Portal de consulta documental · Todos los derechos reservados</div>
+      </section>
+
+      <section class="view" id="ch1">
+        <div class="page-head"><div class="page-number">01</div><div><h2>Objeto y campo de aplicación</h2><p>Define el propósito del sistema, a quién sirve, qué actividades comprende y cuáles son sus límites.</p></div></div>
+        <div class="purpose"><strong>Propósito del capítulo</strong><p>Establecer el alcance de SMARTFIX y del sistema de gestión de la calidad para que las actividades, los requisitos y las responsabilidades estén claramente delimitados.</p></div>
+        <div class="two-col">
+          <div class="panel"><h3>Identificación de SMARTFIX</h3><p><b>Nombre comercial:</b> SMARTFIX</p><p><b>Organización:</b> Soluciones Digitales SmartFix, S.A. de C.V.</p><p><b>Actividad económica:</b> desarrollo de software y apoyo digital a la administración de servicios técnicos de dispositivos Android.</p><p><b>Ubicación:</b> Huehuetoca, Estado de México, México.</p></div>
+          <div class="panel"><h3>Productos y servicios</h3><ul><li>Registro de clientes y dispositivos Android.</li><li>Catálogo de servicios y diagnóstico técnico.</li><li>Presupuestos y órdenes de servicio.</li><li>Seguimiento de reparaciones y pruebas de funcionamiento.</li><li>Historiales, reportes administrativos y bitácoras.</li><li>Gestión de usuarios, roles, permisos y respaldos.</li></ul></div>
+        </div>
+        <div class="panel"><h3>Alcance del sistema de calidad</h3><p>Comprende la planeación, análisis, diseño, desarrollo, pruebas, implementación, documentación y mejora del sistema SMARTFIX, además de los flujos de información que soportan la recepción, diagnóstico, presupuesto, reparación, seguimiento y entrega de equipos.</p><h4>Incluye</h4><ul><li>Gestión de requisitos, cambios y defectos.</li><li>Validación de autorización antes de procedimientos relacionados con mecanismos de seguridad del dispositivo.</li><li>Control de acceso, trazabilidad, registro de actividad y respaldo de información.</li></ul><h4>Límites</h4><p>SMARTFIX organiza información y seguimiento; no reemplaza el criterio técnico ni garantiza por sí solo la reparación física. Las funciones no aprobadas en los requisitos quedan fuera del alcance inicial.</p></div>
+        <div class="chapter-footer"><span></span><button class="btn" onclick="showView('ch2')">Siguiente capítulo →</button></div>
+      </section>
+
+      <section class="view" id="ch2">
+        <div class="page-head"><div class="page-number">02</div><div><h2>Referencias normativas</h2><p>Reúne documentos de referencia para orientar la gestión de calidad, la seguridad de la información y el desarrollo del software.</p></div></div>
+        <div class="purpose"><strong>Propósito del capítulo</strong><p>Identificar las normas y documentos que apoyan al sistema, facilitar su consulta y mantener controlada la edición utilizada.</p></div>
+        <div class="panel"><h3>Documentos de referencia</h3><p>Los enlaces llevan a páginas oficiales o fichas informativas de los organismos emisores. La adopción de una norma debe confirmarse según las necesidades y requisitos aplicables al proyecto.</p>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Documento</th><th>Identificador / fecha</th><th>Aplicación en SMARTFIX</th><th>Consulta</th></tr></thead><tbody>
+          <tr><td><b>Sistemas de gestión de la calidad — Requisitos</b></td><td>ISO 9001:2026<br>Edición publicada en 2026</td><td>Marco para definir procesos, responsabilidades, evaluación del desempeño y mejora del sistema de calidad.</td><td><a href="https://www.iso.org/standard/62085.html" target="_blank" rel="noopener">Ficha ISO ↗</a></td></tr>
+          <tr><td><b>Information security management systems — Requirements</b></td><td>ISO/IEC 27001:2022<br>Enmienda 1:2024</td><td>Apoya la gestión de riesgos de seguridad de la información y los controles de acceso, protección y continuidad.</td><td><a href="https://committee.iso.org/standard/27001" target="_blank" rel="noopener">Ficha ISO ↗</a></td></tr>
+          <tr><td><b>Systems and software engineering — Product quality model</b></td><td>ISO/IEC 25010:2023</td><td>Ayuda a definir características de calidad del software y criterios para evaluación y pruebas.</td><td><a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noopener">Ficha ISO ↗</a></td></tr>
+          <tr><td><b>Software life cycle processes</b></td><td>ISO/IEC/IEEE 12207:2026</td><td>Referencia para organizar actividades del ciclo de vida: desarrollo, operación, mantenimiento y gestión.</td><td><a href="https://www.iso.org/standard/90219.html" target="_blank" rel="noopener">Ficha ISO ↗</a></td></tr>
+          <tr><td><b>Fundamentos y vocabulario de la calidad</b></td><td>Familia ISO 9000<br>Consultar edición vigente</td><td>Apoya el uso consistente de conceptos de calidad y gestión.</td><td><a href="https://www.iso.org/standards.html" target="_blank" rel="noopener">Catálogo ISO ↗</a></td></tr>
+          </tbody></table></div>
+          
+        </div>
+        <div class="panel"><h3>Documentación interna propuesta</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Código</th><th>Documento</th><th>Uso</th></tr></thead><tbody>
+          <tr><td>SF-REQ-01</td><td>Especificación de requisitos</td><td>Registrar requisitos funcionales y no funcionales.</td></tr>
+          <tr><td>SF-PRU-01</td><td>Plan y casos de prueba</td><td>Documentar pruebas, resultados y criterios de aceptación.</td></tr>
+          <tr><td>SF-INC-01</td><td>Registro de incidencias</td><td>Controlar defectos, responsables y correcciones.</td></tr>
+          <tr><td>SF-CAM-01</td><td>Control de cambios</td><td>Evaluar y aprobar modificaciones.</td></tr>
+          <tr><td>SF-DOC-01</td><td>Lista maestra documental</td><td>Controlar versiones, responsables y vigencia.</td></tr>
+        </tbody></table></div></div>
+        <div class="chapter-footer"><button class="btn" onclick="showView('ch1')">← Capítulo anterior</button><button class="btn" onclick="showView('ch3')">Siguiente capítulo →</button></div>
+      </section>
+
+      <section class="view" id="ch3">
+        <div class="page-head"><div class="page-number">03</div><div><h2>Términos y definiciones</h2><p>Glosario para utilizar un lenguaje consistente al documentar, desarrollar, probar y operar SMARTFIX.</p></div></div>
+        <div class="purpose"><strong>Propósito del capítulo</strong><p>Facilitar la comprensión de los conceptos del sistema y permitir la consulta rápida de sus definiciones.</p></div>
+        <div class="panel"><h3>Buscador de conceptos</h3><p>Escribe un término o una palabra de la definición. Los resultados se filtran automáticamente.</p><input id="termSearch" class="search" type="search" placeholder="Buscar: orden, bitácora, autorización…" aria-label="Buscar conceptos"><div id="terms"></div></div>
+        <div class="chapter-footer"><button class="btn" onclick="showView('ch2')">← Capítulo anterior</button><button class="btn" onclick="showView('ch4')">Siguiente capítulo →</button></div>
+      </section>
+
+      <section class="view" id="ch4">
+        <div class="page-head"><div class="page-number">04</div><div><h2>Contexto de la organización</h2><p>Analiza las condiciones internas y externas que pueden influir en el sistema y en la satisfacción de los usuarios.</p></div></div>
+        <div class="purpose"><strong>Propósito del capítulo</strong><p>Comprender el entorno de SMARTFIX, identificar las partes interesadas y definir los procesos necesarios para entregar un servicio ordenado y trazable.</p></div>
+        <div class="panel"><h3>Descripción de la organización</h3><p>SMARTFIX es una solución tecnológica propuesta para un centro de servicio técnico especializado en dispositivos Android. Centraliza datos de clientes, equipos, diagnósticos, presupuestos, técnicos y reparaciones. Busca reducir la dispersión de información, mejorar el seguimiento de las órdenes y facilitar la elaboración de reportes.</p><p><b>Herramientas consideradas en el proyecto:</b> Android Studio, Visual Studio Code, Java, MySQL, HTML, JavaScript y XAMPP/Apache. La arquitectura definitiva debe validarse antes de su implementación.</p></div>
+        <div class="two-col">
+          <div class="panel"><h3>Factores internos</h3><ul><li>Disponibilidad y experiencia del equipo.</li><li>Claridad y estabilidad de los requisitos.</li><li>Calidad e integridad de los datos registrados.</li><li>Infraestructura y herramientas de desarrollo.</li><li>Gestión de accesos, permisos y respaldos.</li></ul></div>
+          <div class="panel"><h3>Factores externos</h3><ul><li>Expectativas de clientes sobre costos y tiempos.</li><li>Cambios técnicos en dispositivos y Android.</li><li>Requisitos legales de privacidad y protección de datos.</li><li>Amenazas de ciberseguridad.</li><li>Disponibilidad y condiciones de proveedores tecnológicos.</li></ul></div>
+        </div>
+        <div class="panel"><h3>Partes interesadas y necesidades</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Parte interesada</th><th>Necesidades / expectativas</th><th>Respuesta del sistema</th></tr></thead><tbody>
+          <tr><td>Clientes</td><td>Servicio confiable, presupuesto claro, estado de reparación y privacidad.</td><td>Estados de órdenes, aceptación del presupuesto e historial.</td></tr>
+          <tr><td>Técnicos</td><td>Datos organizados, diagnóstico y asignación clara.</td><td>Órdenes completas y seguimiento de actividades.</td></tr>
+          <tr><td>Administrador</td><td>Control de clientes, órdenes, costos, técnicos y reportes.</td><td>Paneles, catálogos y reportes operativos.</td></tr>
+          <tr><td>Líder del proyecto</td><td>Control de alcance, recursos, tiempos y riesgos.</td><td>Plan de trabajo, seguimiento y control de cambios.</td></tr>
+          <tr><td>Desarrollo</td><td>Requisitos claros, prioridades y retroalimentación.</td><td>Especificaciones, revisiones y registro de incidencias.</td></tr>
+          <tr><td>Responsable de calidad</td><td>Criterios verificables y evidencias de prueba.</td><td>Casos de prueba, resultados y seguimiento de defectos.</td></tr>
+        </tbody></table></div></div>
+        <div class="panel"><h3>Procesos principales</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>#</th><th>Proceso</th><th>Resultado esperado</th></tr></thead><tbody>
+          <tr><td>01</td><td>Registro del cliente</td><td>Ficha de cliente.</td></tr><tr><td>02</td><td>Registro del dispositivo</td><td>Ficha del equipo.</td></tr><tr><td>03</td><td>Selección del servicio</td><td>Servicio seleccionado.</td></tr><tr><td>04</td><td>Diagnóstico técnico</td><td>Falla documentada.</td></tr><tr><td>05</td><td>Validación de autorización, cuando corresponda</td><td>Permiso verificado antes del procedimiento.</td></tr><tr><td>06</td><td>Elaboración y aceptación del presupuesto</td><td>Aprobación o rechazo registrado.</td></tr><tr><td>07</td><td>Asignación del técnico y reparación</td><td>Trabajo realizado y documentado.</td></tr><tr><td>08</td><td>Pruebas de funcionamiento</td><td>Resultados de prueba registrados.</td></tr><tr><td>09</td><td>Actualización del estado</td><td>Historial actualizado.</td></tr><tr><td>10</td><td>Reporte, entrega y cierre</td><td>Orden cerrada con evidencias.</td></tr>
+        </tbody></table></div></div>
+        <div class="chapter-footer"><button class="btn" onclick="showView('ch3')">← Capítulo anterior</button><button class="btn" onclick="showView('ch5')">Siguiente capítulo →</button></div>
+      </section>
+
+      <section class="view" id="ch5">
+        <div class="page-head"><div class="page-number">05</div><div><h2>Liderazgo</h2><p>Establece cómo la dirección impulsa el sistema de calidad, asigna responsabilidades y mantiene el enfoque al cliente.</p></div></div>
+        <div class="purpose"><strong>Propósito del capítulo</strong><p>Documentar el compromiso de la dirección, la política de calidad, las funciones del equipo y los mecanismos para atender las necesidades de los clientes.</p></div>
+        <div class="panel"><h3>Compromiso de la dirección</h3><ul><li>Aprobar el alcance, la política y los objetivos de calidad.</li><li>Asignar recursos, herramientas y tiempo suficiente.</li><li>Revisar indicadores, pruebas, incidencias y riesgos.</li><li>Impulsar la prevención de defectos y la mejora continua.</li><li>Promover el tratamiento responsable de la información.</li><li>Asegurar que los procedimientos de seguridad de los dispositivos solo se realicen con autorización validada.</li></ul></div>
+        <div class="two-col">
+          <div class="panel"><h3>Responsable de calidad</h3><p><b>Nombre:</b> Jose Antonio Morales Paula</p><p><b>Reporta a:</b> líder del proyecto o dirección patrocinador.</p><h4>Funciones principales</h4><ul><li>Mantener el plan de calidad.</li><li>Revisar trazabilidad de requisitos y pruebas.</li><li>Registrar no conformidades e incidencias.</li><li>Dar seguimiento a correcciones y acciones de mejora.</li><li>Informar resultados y riesgos de calidad.</li></ul></div>
+          <div class="panel"><h3>Política de calidad</h3><p>SMARTFIX se compromete a desarrollar y mantener una solución digital que satisfaga los requisitos acordados de los usuarios y del centro de servicio técnico mediante procesos definidos, verificables y sujetos a mejora continua.</p><p>El proyecto prioriza la funcionalidad, facilidad de uso, confiabilidad, seguridad de la información, trazabilidad de las órdenes y transparencia en diagnósticos y presupuestos.</p><p>El equipo verificará los cambios antes de su liberación, protegerá la información y utilizará los resultados de pruebas y la retroalimentación para mejorar el sistema.</p></div>
+        </div>
+        <div class="panel"><h3>Roles y responsabilidades</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Rol</th><th>Responsabilidad principal</th></tr></thead><tbody>
+          <tr><td>Dirección / patrocinador</td><td>Aprobar política, objetivos, recursos y decisiones relevantes.</td></tr>
+          <tr><td>Líder del proyecto — Serafin espejo Gerardo</td><td>Coordinar alcance, cronograma, presupuesto, riesgos y entregables.</td></tr>
+          <tr><td>Análisis de requisitos</td><td>Documentar, priorizar y validar necesidades de usuarios.</td></tr>
+          <tr><td>Equipo de desarrollo</td><td>Diseñar, programar, revisar cambios y corregir defectos.</td></tr>
+          <tr><td>Responsable de calidad</td><td>Revisar pruebas, evidencias, incidencias y resultados.</td></tr>
+          <tr><td>Administrador del sistema</td><td>Gestionar cuentas, permisos, respaldos y disponibilidad.</td></tr>
+          <tr><td>Técnicos de servicio</td><td>Registrar diagnósticos, reparaciones, pruebas y estados.</td></tr>
+        </tbody></table></div></div>
+        <div class="panel"><h3>Organigrama propuesto</h3><div style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <div style="background:#102a43;color:white;padding:13px 20px;border-radius:10px;min-width:240px;font-weight:750;font-size:13px">Dirección / Patrocinador<br><small style="font-weight:400;color:#cfe4f3">Carlos Méndez Ruiz</small></div>
+          <div style="height:18px;border-left:2px solid #9fb3c8"></div>
+          <div style="background:#eaf4fb;border:1px solid #c8deef;padding:12px 20px;border-radius:10px;min-width:240px;font-weight:750;font-size:13px;color:#174d78">Líder del proyecto</div>
+          <div style="height:18px;border-left:2px solid #9fb3c8"></div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:9px;width:100%;max-width:620px">
+            <div style="border:1px solid #d9e2ec;background:#fff;border-radius:10px;padding:12px;font-size:12px;font-weight:650">Análisis y requisitos</div>
+            <div style="border:1px solid #d9e2ec;background:#fff;border-radius:10px;padding:12px;font-size:12px;font-weight:650">Equipo de desarrollo</div>
+            <div style="border:1px solid #d9e2ec;background:#fff;border-radius:10px;padding:12px;font-size:12px;font-weight:650">Responsable de calidad</div>
+            <div style="border:1px solid #d9e2ec;background:#fff;border-radius:10px;padding:12px;font-size:12px;font-weight:650">Administración técnica</div>
+          </div>
+          <p style="font-size:11px;color:#627d98;margin-top:8px">Usuarios operativos: administrador del centro y técnicos de reparación.</p>
+        </div></div>
+        <div class="panel"><h3>Enfoque al cliente</h3><ul><li>Identificar la necesidad al registrar la solicitud y el dispositivo.</li><li>Explicar diagnóstico y presupuesto de forma comprensible.</li><li>Registrar la aceptación antes de realizar trabajos que la requieran.</li><li>Comunicar cambios de costo, alcance o plazo estimado.</li><li>Proteger los datos personales mediante permisos adecuados.</li><li>Registrar quejas, devoluciones y sugerencias, asignando seguimiento.</li><li>Medir satisfacción y usar los resultados para priorizar mejoras.</li></ul></div>
+        <div class="chapter-footer"><button class="btn" onclick="showView('ch4')">← Capítulo anterior</button><button class="btn" onclick="showView('home')">Volver al panel principal ↑</button></div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const chapterNames={home:"Panel principal",ch1:"Capítulo 1 · Objeto y campo de aplicación",ch2:"Capítulo 2 · Referencias normativas",ch3:"Capítulo 3 · Términos y definiciones",ch4:"Capítulo 4 · Contexto de la organización",ch5:"Capítulo 5 · Liderazgo"};
+function showView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
+  document.getElementById("crumb").textContent=chapterNames[id]||"Panel principal";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+function cardKey(e,id){if(e.key==="Enter"||e.key===" "){e.preventDefault();showView(id)}}
+const glossary=[
+["SMARTFIX","Sistema digital propuesto para administrar los servicios técnicos y la reparación de dispositivos Android.","Sistema"],
+["Cliente","Persona física o moral que solicita un servicio técnico para uno o más dispositivos.","Parte interesada"],
+["Dispositivo","Equipo Android registrado en el sistema para recibir un servicio técnico.","Equipo"],
+["Orden de servicio","Registro que reúne cliente, dispositivo, diagnóstico, presupuesto, técnico, estado y seguimiento.","Operación"],
+["Diagnóstico","Proceso de identificación y registro de la falla o condición técnica del dispositivo.","Proceso técnico"],
+["Presupuesto","Estimación de costos de mano de obra, piezas y otros conceptos de reparación.","Comercial"],
+["Técnico","Persona asignada para realizar diagnóstico, reparación y pruebas de funcionamiento.","Rol"],
+["FRP (Factory Reset Protection)","Mecanismo de protección de determinados dispositivos Android que busca impedir el uso no autorizado después de un restablecimiento.","Seguridad"],
+["Autorización","Confirmación documentada de propiedad, consentimiento o permiso necesario antes de un procedimiento restringido.","Control"],
+["Bitácora","Registro de acciones realizadas en el sistema, con datos como usuario, fecha, operación y resultado.","Trazabilidad"],
+["Usuario","Persona autenticada y autorizada para utilizar SMARTFIX.","Acceso"],
+["Rol","Conjunto de permisos que determina las operaciones disponibles para un usuario.","Seguridad"],
+["Base de datos","Estructura organizada para almacenar y administrar datos de usuarios, clientes, dispositivos y órdenes.","Tecnología"],
+["Reporte","Salida de información que permite revisar el estado, historial o desempeño de las operaciones.","Información"],
+["Prototipo funcional","Versión del sistema que demuestra y permite validar las funciones principales del proyecto.","Desarrollo"],
+["Requisito","Necesidad o expectativa establecida, obligatoria o asumida que debe cumplir el sistema o proceso.","Calidad"],
+["Criterio de aceptación","Condición verificable que debe cumplirse para aceptar una función, entrega o resultado de prueba.","Calidad"],
+["Incidencia o defecto","Comportamiento o condición que no cumple un requisito o resultado esperado.","Calidad"],
+["Trazabilidad","Capacidad de relacionar una operación con su origen, responsable, fecha, estado y evidencia.","Control"],
+["Parte interesada","Persona u organización que puede afectar, verse afectada o considerar que se ve afectada por una actividad o decisión.","Gestión"],
+["Confidencialidad","Propiedad por la que la información solo está disponible para personas o procesos autorizados.","Seguridad"],
+["Respaldo","Copia de información que permite recuperarla después de una pérdida, daño o indisponibilidad.","Continuidad"],
+["Mejora continua","Actividad recurrente para elevar el desempeño y la capacidad del sistema para cumplir sus objetivos.","Calidad"]
+];
+const termsEl=document.getElementById("terms"), searchEl=document.getElementById("termSearch");
+function renderTerms(q=""){
+ const f=q.trim().toLocaleLowerCase("es");
+ const matches=glossary.filter(t=>t.join(" ").toLocaleLowerCase("es").includes(f));
+ termsEl.innerHTML=matches.length?matches.map(t=>`<div class="term"><strong>${t[0]}</strong><small>${t[2]}</small><p>${t[1]}</p></div>`).join(""):'<p>No se encontraron conceptos. Intenta con otra palabra.</p>';
+}
+searchEl.addEventListener("input",e=>renderTerms(e.target.value));renderTerms();
+</script>
+</body>
+</html>
